@@ -1,0 +1,282 @@
+import React, {useState, useEffect} from 'react';
+import {Input} from 'react-native-elements';
+import {
+  EditCouponWrapper,
+  FormWrapper,
+  CouponExpiryBtn,
+  CouponExpiryText,
+  CouponExpiryLabel,
+  Restricationtitle,
+} from './styles';
+import BottomDivider from '../../components/bottom-divider';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import CustomPicker from '../../components/custom-picker';
+import {isEmpty} from '../../../utils/helper';
+import {Text, Alert} from 'react-native';
+import moment from 'moment';
+import {UPDATE_COUPON} from '../../../queries/couponQueries';
+import {GET_CATEGORIES, GET_PRODUCTS} from '../../../queries/productQueries';
+import AppLoader from '../../components/loader';
+import {Query} from 'react-apollo';
+import {useMutation} from '@apollo/client';
+import FormActionsComponent from '../../components/formAction';
+import MulipleSelect from '../../components/multiple-selection';
+import {GraphqlError, GraphqlSuccess} from '../../components/garphqlMessages';
+
+const discountType = [
+  {label: 'Fixed Amount Discount', value: 'amount-discount'},
+  {label: 'Fixed Percantage Discount', value: 'precantage-discount'},
+];
+
+const EditCouponsForm = ({navigation, singleCouponDetail}) => {
+  const [updateCoupon, {loading: updateLoading}] = useMutation(UPDATE_COUPON, {
+    onError: (error) => {
+      GraphqlError(error);
+    },
+    onCompleted: (data) => {
+      GraphqlSuccess('Updated successfully');
+      navigation.goBack();
+    },
+  });
+  const [couponForm, setCouponForm] = useState({});
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [validation, setValdiation] = useState({
+    code: '',
+    description: '',
+    discount_value: '',
+  });
+
+  useEffect(() => {
+    if (singleCouponDetail) {
+      setCouponForm(singleCouponDetail);
+    }
+  }, [singleCouponDetail]);
+
+  const UpdateCouponCodeForm = () => {
+    if (couponForm.code === '') {
+      setValdiation({...validation, code: 'Required'});
+    } else if (couponForm.description === '') {
+      setValdiation({...validation, code: '', description: 'Required'});
+    } else if (couponForm.discount_value === '') {
+      setValdiation({
+        ...validation,
+        code: '',
+        description: '',
+        discount_value: 'Required',
+      });
+    } else {
+      setValdiation({
+        ...validation,
+        code: '',
+        description: '',
+        discount_value: '',
+      });
+      var updateObejct = {
+        id: couponForm.id,
+        code: couponForm.code,
+        description: couponForm.description,
+        discount_type: couponForm.discount_type,
+        discount_value: couponForm.discount_value,
+        free_shipping: couponForm.free_shipping,
+        expire: couponForm.expire,
+        minimum_spend: couponForm.minimum_spend,
+        maximum_spend: couponForm.maximum_spend,
+        products: couponForm.products,
+        exclude_products: couponForm.exclude_products,
+        categories: couponForm.categories,
+        exclude_categories: couponForm.exclude_categories,
+      };
+      updateCoupon({variables: updateObejct});
+    }
+  };
+
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = (date) => {
+    var convertedDate = moment(date).format('YYYY-MM-DD');
+    setCouponForm({...couponForm, ['expire']: convertedDate});
+    hideDatePicker();
+  };
+  return (
+    <>
+      {updateLoading ? <AppLoader /> : null}
+      {!isEmpty(couponForm) ? (
+        <>
+          <FormActionsComponent
+            onCancel={() => navigation.goBack()}
+            onSubmit={UpdateCouponCodeForm}
+            submitText="Save"
+          />
+          <EditCouponWrapper>
+            <FormWrapper>
+              <Input
+                label="Coupon Code"
+                value={couponForm.code}
+                onChangeText={(value) =>
+                  setCouponForm({...couponForm, ['code']: value})
+                }
+                errorMessage={validation.code}
+              />
+              <Input
+                label="Description"
+                value={couponForm.description}
+                onChangeText={(value) =>
+                  setCouponForm({...couponForm, ['description']: value})
+                }
+                multiline
+                numberOfLines={2}
+                errorMessage={validation.description}
+              />
+              <Input
+                label="Coupon Amount"
+                value={couponForm.discount_value}
+                onChangeText={(value) =>
+                  setCouponForm({...couponForm, ['discount_value']: value})
+                }
+                keyboardType="numeric"
+                errorMessage={validation.discount_value}
+              />
+              <CouponExpiryBtn onPress={showDatePicker}>
+                <CouponExpiryLabel>Coupon Expiry</CouponExpiryLabel>
+                <CouponExpiryText>
+                  {moment(couponForm.expire).format('ll')}
+                </CouponExpiryText>
+              </CouponExpiryBtn>
+              <DateTimePickerModal
+                isVisible={isDatePickerVisible}
+                mode="date"
+                onConfirm={handleConfirm}
+                onCancel={hideDatePicker}
+              />
+              <CustomPicker
+                iosDropdown
+                pickerKey="label"
+                pickerVal="value"
+                androidPickerData={discountType}
+                selectedValue={couponForm.discount_type}
+                iosPickerData={discountType}
+                pickerValChange={(val) =>
+                  setCouponForm({...couponForm, ['discount_type']: val})
+                }
+                placeholder="Please Select"
+                label="Discount Type"
+              />
+
+              <Restricationtitle>Usage restriction</Restricationtitle>
+              <Input
+                keyboardType="numeric"
+                label="Minimum Spend"
+                value={couponForm.minimum_spend}
+                onChangeText={(value) =>
+                  setCouponForm({...couponForm, ['minimum_spend']: value})
+                }
+              />
+              <Input
+                keyboardType="numeric"
+                label="Maximum Spend"
+                value={couponForm.maximum_spend}
+                onChangeText={(value) =>
+                  setCouponForm({...couponForm, ['maximum_spend']: value})
+                }
+              />
+              <Query query={GET_PRODUCTS}>
+                {({loading, error, data}) => {
+                  if (loading) {
+                    return <AppLoader />;
+                  }
+                  if (error) {
+                    return <Text>Somethng went wrong</Text>;
+                  }
+
+                  const products = data.products;
+                  return products.length ? (
+                    <>
+                      <MulipleSelect
+                        items={products}
+                        selected={couponForm.products}
+                        onItemChange={(items) => {
+                          setCouponForm({
+                            ...couponForm,
+                            ['products']: items,
+                          });
+                        }}
+                        label="Products"
+                        itemkey="name"
+                        value="id"
+                      />
+                      <MulipleSelect
+                        items={products}
+                        selected={couponForm.exclude_products}
+                        onItemChange={(items) => {
+                          setCouponForm({
+                            ...couponForm,
+                            ['exclude_products']: items,
+                          });
+                        }}
+                        label="Exclude Products"
+                        itemkey="name"
+                        value="id"
+                      />
+                    </>
+                  ) : null;
+                }}
+              </Query>
+              <Query query={GET_CATEGORIES}>
+                {({loading, error, data}) => {
+                  if (loading) {
+                    return <AppLoader />;
+                  }
+                  if (error) {
+                    return <Text>Somethng went wrong</Text>;
+                  }
+
+                  const allCategories = data.productCategories;
+                  return allCategories.length ? (
+                    <>
+                      <MulipleSelect
+                        items={allCategories}
+                        selected={couponForm.categories}
+                        onItemChange={(items) => {
+                          setCouponForm({
+                            ...couponForm,
+                            ['categories']: items,
+                          });
+                        }}
+                        label="Categories"
+                        itemkey="name"
+                        value="id"
+                      />
+                      <MulipleSelect
+                        items={allCategories}
+                        selected={couponForm.exclude_categories}
+                        onItemChange={(items) => {
+                          setCouponForm({
+                            ...couponForm,
+                            ['exclude_categories']: items,
+                          });
+                        }}
+                        label="Exclude Categories"
+                        itemkey="name"
+                        value="id"
+                      />
+                    </>
+                  ) : null;
+                }}
+              </Query>
+            </FormWrapper>
+          </EditCouponWrapper>
+        </>
+      ) : null}
+
+      <BottomDivider />
+    </>
+  );
+};
+
+export default EditCouponsForm;
