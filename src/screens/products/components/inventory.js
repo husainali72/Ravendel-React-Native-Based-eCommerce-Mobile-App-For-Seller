@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Input} from 'react-native-elements';
+import {Input} from "@rneui/themed";
 import Colors from '../../../utils/color';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {
@@ -41,7 +41,6 @@ const InventoryComponents = ({sku, quantity, onInventoryInputChange}) => {
         />
         <Input
           label="Quantity"
-          keyboardType="numeric"
           keyboardType="numeric"
           type="number"
           value={quantity || ''}

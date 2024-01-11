@@ -56,7 +56,7 @@ const Accordion = ({title, children, defaultOpen, dense, withCheckbox}) => {
       </AccordionHeader>
       <AccordionBody
         style={{
-          paddingHorizontal : 7,
+          // paddingHorizontal : 7,
           height: open ? 'auto' : 0,
           paddingTop: open ? 10 : 0,
           paddingBottom: open ? 10 : 0,

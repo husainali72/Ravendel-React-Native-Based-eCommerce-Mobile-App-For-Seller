@@ -4,7 +4,7 @@ import Colors from '../../utils/color';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Image} from 'react-native';
 import {isEmpty} from '../../utils/helper';
-import {BottomSheet, ListItem} from 'react-native-elements';
+import {BottomSheet, ListItem} from "@rneui/themed";
 import ImagePicker from 'react-native-image-picker';
 
 const FeaturedImageComponents = ({image, inputChange, removeImage}) => {

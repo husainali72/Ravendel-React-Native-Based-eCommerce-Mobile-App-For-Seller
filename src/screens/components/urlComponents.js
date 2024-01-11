@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Input} from 'react-native-elements';
+import {Input} from '@rneui/themed';
 import styled from 'styled-components';
 import Colors from '../../utils/color';
 import {BASE_URL} from '../../utils/helper';
@@ -23,7 +23,7 @@ const URLComponents = ({url, updateOf, changePermalink, updatePermalink}) => {
     const token = SyncStorage.get('token');
     return axios
       .post(
-        `${BASE_URL}/api/misc/checkurl`,
+        `${BASE_URL}apis/misc/checkurl`,
         {
           url: url,
           table: table,
@@ -46,7 +46,7 @@ const URLComponents = ({url, updateOf, changePermalink, updatePermalink}) => {
       });
   };
 
-  const isUrlExist = async (url) => {
+  const isUrlExist = async url => {
     let updatedUrl = await getUpdatedUrl(updateOf, url);
     updatePermalink(updatedUrl);
   };
@@ -59,7 +59,7 @@ const URLComponents = ({url, updateOf, changePermalink, updatePermalink}) => {
           <Input
             label="Url"
             value={url}
-            onChangeText={(value) => changePermalink(value)}
+            onChangeText={value => changePermalink(value)}
           />
         ) : (
           <URLLinkWrapper>
@@ -80,8 +80,8 @@ export default URLComponents;
 const URLWrapper = styled.View`
   margin-bottom: 5px;
   margin-top: 5px;
-  padding-left: ${(props) => (props.edit ? '0px' : '15px')};
-  padding-right: ${(props) => (props.edit ? '0px' : '15px')};
+  padding-left: ${props => (props.edit ? '0px' : '15px')};
+  padding-right: ${props => (props.edit ? '0px' : '15px')};
 `;
 const URLLinkWrapper = styled.View`
   flex-direction: row;

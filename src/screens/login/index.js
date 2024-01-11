@@ -6,8 +6,8 @@ import AppLoader from '../components/loader';
 const LoginScreen = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const [loginDetail, setLoginDetail] = useState({
-    password: '123456',
-    email: 'SirCumference@doe.com',
+    password: '',
+    email: '',
   });
 
   const handleValueChange = (name, value) => {
@@ -25,7 +25,7 @@ const LoginScreen = ({navigation}) => {
 
   const onSubmit = async () => {
     setLoading(true);
-
+    console.log(loginDetail,'loginDetail')
     if (loginDetail.email === '' || loginDetail.password === '') {
       showAletMessage('All field are required');
     } else {

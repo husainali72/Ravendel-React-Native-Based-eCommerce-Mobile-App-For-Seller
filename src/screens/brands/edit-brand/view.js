@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {isEmpty, BASE_URL} from '../../../utils/helper';
 import AppLoader from '../../components/loader';
-import {Input} from 'react-native-elements';
+import {Input} from  "@rneui/themed";
 import URLComponents from '../../components/urlComponents';
 import FeaturedImageComponents from '../../components/featuredImageComponents';
 import {EditCategoryWrapper, FormWrapper, MetaSectiontitle} from './styles';

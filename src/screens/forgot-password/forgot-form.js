@@ -1,6 +1,6 @@
 import React from 'react';
 import {KeyboardAvoidingView, ScrollView} from 'react-native';
-import { Input, Button } from 'react-native-elements';
+import { Input, Button } from "@rneui/themed";
 import {ForgotWrapper, ForgotTitle} from './styles';
 
 const ForgotForm = ({email, loading, handleChange, onSubmit}) => {

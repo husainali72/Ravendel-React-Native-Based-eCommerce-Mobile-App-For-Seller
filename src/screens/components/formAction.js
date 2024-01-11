@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Button} from 'react-native-elements';
+import {Button} from "@rneui/themed";
 import Styles from '../common-styles';
 
 const FormActionsComponent = ({onCancel, onSubmit, submitText}) => (

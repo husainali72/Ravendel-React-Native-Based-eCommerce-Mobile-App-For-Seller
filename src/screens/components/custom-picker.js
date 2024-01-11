@@ -1,6 +1,6 @@
 import React from 'react';
 import {Platform, View, Text} from 'react-native';
-import {Picker} from '@react-native-community/picker';
+import {Picker} from '@react-native-picker/picker';
 import Styles from '../common-styles';
 
 const CustomPicker = ({

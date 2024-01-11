@@ -1,17 +1,21 @@
 import 'react-native-gesture-handler';
 import React, {useEffect, useState, useContext} from 'react';
 import Navigation from './src/navigation';
-import {ThemeProvider} from 'react-native-elements';
+import {createTheme, ThemeProvider} from '@rneui/themed';
+
 import Colors from './src/utils/color';
-import {ApolloClient} from 'apollo-client';
-import {InMemoryCache} from 'apollo-cache-inmemory';
-import {createUploadLink} from 'apollo-upload-client';
-import {ApolloLink} from 'apollo-link';
-import {ApolloProvider} from 'react-apollo';
-import {ApolloProvider as ApolloHooksProvider} from '@apollo/react-hooks';
+// import {ApolloClient} from 'apollo-client';
+// import {InMemoryCache} from 'apollo-cache-inmemory';
+// import {createUploadLink} from 'apollo-upload-client';
+// import {ApolloLink} from 'apollo-link';
+import {ApolloProvider} from '@apollo/react-hooks';
 import SyncStorage from 'sync-storage';
 import SplashScreen from './src/screens/components/splash-screen';
 import {Context as AuthContext} from './src/context/AuthContext';
+import APclient from './src/client';
+import {NavigationContainer} from '@react-navigation/native';
+import {Provider} from 'react-redux';
+import store from './src/store';
 
 const App = () => {
   const AuthState = useContext(AuthContext);
@@ -41,47 +45,52 @@ const App = () => {
     return <SplashScreen />;
   }
 
-  const httpLink = new createUploadLink({
-    uri: 'https://ravendel-backend.hbwebsol.com/graphql',
-  });
+  // const httpLink = new createUploadLink({
+  //   uri: 'https://ravendel-backend.hbwebsol.com/graphql',
+  // });
 
-  const authLink = new ApolloLink((operation, forward) => {
-    operation.setContext({
-      headers: {
-        authorization: token,
-      },
-    });
-    return forward(operation);
-  });
+  // const authLink = new ApolloLink((operation, forward) => {
+  //   operation.setContext({
+  //     headers: {
+  //       authorization: token,
+  //     },
+  //   });
+  //   return forward(operation);
+  // });
 
-  const APclient = new ApolloClient({
-    link: authLink.concat(httpLink),
-    cache: new InMemoryCache(),
-  });
+  // const APclient = new ApolloClient({
+  //   link: authLink.concat(httpLink),
+  //   cache: new InMemoryCache(),
+  // });
 
   /* Theme */
-  const theme = {
-    colors: {
-      primary: Colors.primaryColor,
-    },
-  };
+  // const theme = {
+  //   colors: {
+  //     primary: Colors.primaryColor,
+  //   },
+  // };
+  const theme = createTheme({
+    components: {},
+  });
 
-  /* For Networ API response */
-  if (__DEV__) {
-    import('./src/utils/reactotron').then(() =>
-      console.log('Reactotron Configured'),
-    );
-  }
+  // /* For Networ API response */
+  // if (__DEV__) {
+  //   import('./src/utils/reactotron').then(() =>
+  //     console.log('Reactotron Configured'),
+  //   );
+  // }
 
   return (
     <>
-      <ApolloProvider client={APclient}>
-        <ApolloHooksProvider client={APclient}>
+      <Provider store={store}>
+        <ApolloProvider client={APclient}>
           <ThemeProvider theme={theme}>
-            <Navigation />
+            <NavigationContainer>
+              <Navigation />
+            </NavigationContainer>
           </ThemeProvider>
-        </ApolloHooksProvider>
-      </ApolloProvider>
+        </ApolloProvider>
+      </Provider>
     </>
   );
 };

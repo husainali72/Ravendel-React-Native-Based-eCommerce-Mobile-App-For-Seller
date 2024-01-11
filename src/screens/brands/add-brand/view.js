@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import AppLoader from '../../components/loader';
-import {Input} from 'react-native-elements';
+import {Input} from "@rneui/themed";
 import {AddBrandsWrapper, FormWrapper, NotesForBrands} from './styles';
 import {useMutation} from '@apollo/client';
 import {ADD_BRAND} from '../../../queries/brandsQueries';

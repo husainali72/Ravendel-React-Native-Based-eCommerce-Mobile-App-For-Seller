@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Input} from 'react-native-elements';
+import {Input} from "@rneui/themed";
 import {
   AddCouponWrapper,
   FormWrapper,
@@ -16,7 +16,7 @@ import moment from 'moment';
 import {ADD_COUPON} from '../../../queries/couponQueries';
 import {GET_CATEGORIES, GET_PRODUCTS} from '../../../queries/productQueries';
 import AppLoader from '../../components/loader';
-import {Query} from 'react-apollo';
+import {Query} from '@apollo/client';
 import {useMutation} from '@apollo/client';
 import FormActionsComponent from '../../components/formAction';
 import MulipleSelect from '../../components/multiple-selection';

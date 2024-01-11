@@ -13,7 +13,7 @@ import {
   Button,
   BottomSheet,
   ListItem,
-} from 'react-native-elements';
+} from "@rneui/themed";
 import {isEmpty} from '../../../utils/helper';
 import BottomDivider from '../../components/bottom-divider';
 import CustomPicker from '../../components/custom-picker';

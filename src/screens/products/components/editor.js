@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: 40,
     alignItems: 'center',
-    paddingHorizontal: 15,
+    // paddingHorizontal: 15
   },
 
   input: {

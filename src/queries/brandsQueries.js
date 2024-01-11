@@ -2,23 +2,29 @@ import gql from 'graphql-tag';
 const GET_BRANDS = gql`
   {
     brands {
-      id
-      name
-      url
-      brand_logo
-      meta {
-        title
-        description
-        keywords
+      data {
+        id
+        name
+        url
+        brand_logo
+        meta {
+          title
+          description
+          keywords
+        }
+        date
+        updated
       }
-      date
-      updated
+      message {
+        message
+        success
+      }
     }
   }
 `;
 
 const GET_BRAND = gql`
-  query($id: ID!) {
+  query ($id: ID!) {
     brand(id: $id) {
       id
       name
@@ -34,27 +40,17 @@ const GET_BRAND = gql`
     }
   }
 `;
-
 const ADD_BRAND = gql`
-  mutation($brands: [BrandField]) {
+  mutation ($brands: [BrandField]) {
     addBrand(brands: $brands) {
-      id
-      name
-      url
-      brand_logo
-      meta {
-        title
-        description
-        keywords
-      }
-      date
-      updated
+      message
+      success
     }
   }
 `;
 
 const UPDATE_BRAND = gql`
-  mutation(
+  mutation (
     $id: ID!
     $name: String
     $url: String
@@ -68,35 +64,16 @@ const UPDATE_BRAND = gql`
       updated_brand_logo: $updated_brand_logo
       meta: $meta
     ) {
-      id
-      name
-      url
-      brand_logo
-      meta {
-        title
-        description
-        keywords
-      }
-      date
-      updated
+      message
+      success
     }
   }
 `;
-
 const DELETE_BRAND = gql`
-  mutation($id: ID!) {
+  mutation ($id: ID!) {
     deleteBrand(id: $id) {
-      id
-      name
-      url
-      brand_logo
-      meta {
-        title
-        description
-        keywords
-      }
-      date
-      updated
+      message
+      success
     }
   }
 `;

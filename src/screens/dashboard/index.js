@@ -1,14 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import AppHeader from '../components/header';
-import {ScrollView} from 'react-native';
+import { ScrollView } from 'react-native';
 import {
   DashbaordCardWrapper,
   DashbaordCard,
   DashbaordCardValue,
   DashbaordCardTitle,
 } from './styles';
+import { useDispatch, useSelector } from 'react-redux';
+import { getDashboardDataAction } from '../../store/action';
 
-const DashboardScreen = ({navigation}) => {
+const DashboardScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const { dashBoardData } = useSelector(state=>state.dashboard)
+
+  useEffect(() => {
+    dispatch(getDashboardDataAction())
+  }, [])
   return (
     <>
       <AppHeader title="Dashboard" navigation={navigation} />
@@ -24,11 +32,11 @@ const DashboardScreen = ({navigation}) => {
           </DashbaordCard>
           <DashbaordCard onPress={() => navigation.navigate('AllProducts')}>
             <DashbaordCardTitle>Total Products</DashbaordCardTitle>
-            <DashbaordCardValue>1000</DashbaordCardValue>
+            <DashbaordCardValue>{dashBoardData.product_count}</DashbaordCardValue>
           </DashbaordCard>
           <DashbaordCard onPress={() => navigation.navigate('AllCustomers')}>
             <DashbaordCardTitle>Total Customers</DashbaordCardTitle>
-            <DashbaordCardValue>100</DashbaordCardValue>
+            <DashbaordCardValue>{dashBoardData.customer_count}</DashbaordCardValue>
           </DashbaordCard>
           <DashbaordCard
             onPress={() =>

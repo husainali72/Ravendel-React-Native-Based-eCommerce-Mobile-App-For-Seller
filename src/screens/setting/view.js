@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {SettingWrapper} from './styles';
-import {CheckBox} from 'react-native-elements';
+import {CheckBox} from "@rneui/themed";
 
 const SettingView = ({navigation}) => {
   const [orderNotification, setOrderNotification] = useState(true);

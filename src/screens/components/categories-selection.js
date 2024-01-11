@@ -6,7 +6,7 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import {CheckBox, Overlay, Button} from 'react-native-elements';
+import {CheckBox, Overlay, Button} from "@rneui/themed";
 import Accordion from './accordion';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Colors from '../../utils/color';
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   badgeWrapper: {
-    paddingHorizontal: 10,
+    // paddingHorizontal: 10,
     paddingVertical: 5,
     borderWidth: 1,
     borderColor: '#3a3a3a',

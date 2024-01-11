@@ -15,7 +15,7 @@ import {
   ProductStatusText,
   ProductStatus,
 } from './styles';
-import {Image, SearchBar} from 'react-native-elements';
+import {Image, SearchBar} from '@rneui/themed';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Share, Text} from 'react-native';
 import {GET_PRODUCTS, DELETE_PRODUCT} from '../../../queries/productQueries';
@@ -34,23 +34,28 @@ const AllProductsView = ({navigation, RefecthAllProducts, stopReload}) => {
       notifyOnNetworkStatusChange: true,
     },
   );
+  console.log(loading, error, data, 'popppp');
 
   const [deleteProduct, {loading: DeleteLoading}] = useMutation(
     DELETE_PRODUCT,
     {
-      onError: (error) => {
+      onError: error => {
         GraphqlError(error);
       },
-      onCompleted: (data) => {
+      onCompleted: data => {
         GraphqlSuccess('Deleted successfully');
         refetch();
       },
     },
   );
- 
+
   if (error) {
     GraphqlError(error);
-    return <Text style={{textAlign: 'center',padding:10, color: 'red'}}>Something went wrong. Please try again later</Text>;
+    return (
+      <Text style={{textAlign: 'center', padding: 10, color: 'red'}}>
+        Something went wrong. Please try again later
+      </Text>
+    );
   }
 
   if (RefecthAllProducts) {
@@ -58,7 +63,7 @@ const AllProductsView = ({navigation, RefecthAllProducts, stopReload}) => {
     refetch();
   }
 
-  const onShare = async (url) => {
+  const onShare = async url => {
     try {
       const result = await Share.share({
         message: `https://ravendel-frontend.hbwebsol.com/product/${url}`,
@@ -84,103 +89,96 @@ const AllProductsView = ({navigation, RefecthAllProducts, stopReload}) => {
       <MainContainer>
         {DeleteLoading || loading || networkStatus === NetworkStatus.refetch ? (
           <AppLoader />
-        ) : data && data.products && data.products.length > 0 ? (
+        ) : data && data.products && data.products.data.length > 0 ? (
           <>
             <ProductsWrapper>
               <ProductsCardWrapper>
-                {data.products
-                  .sort((a, b) => (a.data < b.date ? 1 : -1))
-                  .map((product, i) => (
-                    <ProductCard
-                      key={i}
-                      onPress={() => {
-                        navigation.navigate('ProductsScreen', {
-                          screen: 'EditProduct',
-                          params: {id: product.id},
-                        });
-                      }}>
-                      <FeatureImageWrapper>
-                        {!isEmpty(product.feature_image) ? (
-                          <Image
-                            source={{
-                              uri: BASE_URL + product.feature_image.medium,
-                            }}
-                            style={{height: 200}}
-                            resizeMode="cover"
-                          />
-                        ) : (
-                          <Image
-                            source={{
-                              uri:
-                                'https://www.hbwebsol.com/wp-content/uploads/2020/07/category_dummy.png',
-                            }}
-                            style={{height: 200}}
-                            resizeMode="cover"
-                          />
-                        )}
-                      </FeatureImageWrapper>
+                {data.products.data.map((product, i) => (
+                  <ProductCard
+                    key={i}
+                    onPress={() => {
+                      navigation.navigate('ProductsScreen', {
+                        screen: 'EditProduct',
+                        params: {id: product._id},
+                      });
+                    }}>
+                    <FeatureImageWrapper>
+                      {!isEmpty(product.feature_image) ? (
+                        <Image
+                          source={{
+                            uri: BASE_URL + '/' + product.feature_image,
+                          }}
+                          style={{height: 200}}
+                          resizeMode="cover"
+                        />
+                      ) : (
+                        <Image
+                          source={{
+                            uri: 'https://www.hbwebsol.com/wp-content/uploads/2020/07/category_dummy.png',
+                          }}
+                          style={{height: 200}}
+                          resizeMode="cover"
+                        />
+                      )}
+                    </FeatureImageWrapper>
 
-                      <ProductCardBody>
-                        {product.pricing.sellprice ? (
-                          <ProductPriceWrapper>
-                            <ProductSellPrice>
-                              ${product.pricing.sellprice.toFixed(2)}
-                            </ProductSellPrice>
-                            <ProductHasSellPrice>
-                              ${product.pricing.price.toFixed(2)}
-                            </ProductHasSellPrice>
-                          </ProductPriceWrapper>
-                        ) : (
-                          <ProductPrice>
+                    <ProductCardBody>
+                      {product.pricing.sellprice ? (
+                        <ProductPriceWrapper>
+                          <ProductSellPrice>
+                            ${product.pricing.sellprice.toFixed(2)}
+                          </ProductSellPrice>
+                          <ProductHasSellPrice>
                             ${product.pricing.price.toFixed(2)}
-                          </ProductPrice>
-                        )}
+                          </ProductHasSellPrice>
+                        </ProductPriceWrapper>
+                      ) : (
+                        <ProductPrice>
+                          ${product.pricing.price.toFixed(2)}
+                        </ProductPrice>
+                      )}
 
-                        <ProductTitle numberOfLines={1}>
-                          {product.name}
-                        </ProductTitle>
-                      </ProductCardBody>
-                      <ProductShare onPress={() => onShare(product.url)}>
-                        <Icon
-                          name="share-alt"
-                          color={Colors.primaryColor}
-                          size={16}
-                        />
-                      </ProductShare>
-                      <ProductRemove
-                        onPress={() => {
-                          Alert.alert(
-                            'Are you sure?',
-                            '',
-                            [
-                              {
-                                text: 'Cancel',
-                                style: 'cancel',
-                              },
-                              {
-                                text: 'OK',
-                                onPress: () =>
-                                  deleteProduct({
-                                    variables: {id: product.id},
-                                  }),
-                              },
-                            ],
-                            {cancelable: false},
-                          );
-                        }}>
-                        <Icon
-                          name="trash"
-                          color={Colors.deleteColor}
-                          size={16}
-                        />
-                      </ProductRemove>
-                      <ProductStatus status={product.status}>
-                        <ProductStatusText>
-                          {product.status === null ? 'Draft' : product.status}
-                        </ProductStatusText>
-                      </ProductStatus>
-                    </ProductCard>
-                  ))}
+                      <ProductTitle numberOfLines={1}>
+                        {product.name}
+                      </ProductTitle>
+                    </ProductCardBody>
+                    <ProductShare onPress={() => onShare(product.url)}>
+                      <Icon
+                        name="share-alt"
+                        color={Colors.primaryColor}
+                        size={16}
+                      />
+                    </ProductShare>
+                    <ProductRemove
+                      onPress={() => {
+                        Alert.alert(
+                          'Are you sure?',
+                          '',
+                          [
+                            {
+                              text: 'Cancel',
+                              style: 'cancel',
+                            },
+                            {
+                              text: 'OK',
+                              onPress: () =>
+                                deleteProduct({
+                                  variables: {id: product.id},
+                                }),
+                            },
+                          ],
+                          {cancelable: false},
+                        );
+                      }}>
+                      <Icon name="trash" color={Colors.deleteColor} size={16} />
+                    </ProductRemove>
+                    <ProductStatus status={product.status}>
+                      <ProductStatusText>
+                        {product.status === null ? 'Draft' : product.status}
+                      </ProductStatusText>
+                    </ProductStatus>
+                  </ProductCard>
+                ))}
               </ProductsCardWrapper>
             </ProductsWrapper>
           </>
@@ -209,7 +207,7 @@ export default AllProductsView;
 //   ProductStatusText,
 //   ProductStatus,
 // } from './styles';
-// import {Image, SearchBar} from 'react-native-elements';
+// import {Image, SearchBar} from "@rneui/themed";
 // import Icon from 'react-native-vector-icons/FontAwesome5';
 // import {Share, Text, View} from 'react-native';
 // import {GET_PRODUCTS, DELETE_PRODUCT} from '../../../queries/productQueries';

@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import {isEmpty, BASE_URL} from '../../../utils/helper';
 import AppLoader from '../../components/loader';
-import {Input} from 'react-native-elements';
+import {Input} from '@rneui/themed';
 import URLComponents from '../../components/urlComponents';
 import FeaturedImageComponents from '../../components/featuredImageComponents';
 import {EditCategoryWrapper, FormWrapper, MetaSectiontitle} from './styles';
-import {Query} from 'react-apollo';
+import {Query, useQuery} from '@apollo/client';
 import {useMutation} from '@apollo/client';
 import {GET_CATEGORIES, UPDATE_CATEGORY} from '../../../queries/productQueries';
 import CustomPicker from '../../components/custom-picker';
@@ -14,6 +14,9 @@ import {GraphqlError, GraphqlSuccess} from '../../components/garphqlMessages';
 import {Text} from 'react-native';
 
 const EditCategoryView = ({navigation, singleCategoryDetail}) => {
+  const {loading, error, data} = useQuery(GET_CATEGORIES);
+  console.log(data, 'cat');
+  const allCategories = data.productCategories.data;
   const [categoryForm, setCategoryForm] = useState({});
   const [validation, setValdiation] = useState({
     name: '',
@@ -24,10 +27,10 @@ const EditCategoryView = ({navigation, singleCategoryDetail}) => {
   const [updateCategory, {loading: addedLoading}] = useMutation(
     UPDATE_CATEGORY,
     {
-      onError: (error) => {
+      onError: error => {
         GraphqlError(error);
       },
-      onCompleted: (data) => {
+      onCompleted: data => {
         GraphqlSuccess('Updated successfully');
         setCategoryForm({});
         navigation.goBack();
@@ -86,11 +89,11 @@ const EditCategoryView = ({navigation, singleCategoryDetail}) => {
               <Input
                 label="Name"
                 value={categoryForm.name}
-                onChangeText={(value) =>
+                onChangeText={value =>
                   setCategoryForm({...categoryForm, ['name']: value})
                 }
                 errorMessage={validation.name}
-                onEndEditing={(event) => {
+                onEndEditing={event => {
                   let value =
                     !!event.nativeEvent && !!event.nativeEvent.text
                       ? event.nativeEvent.text
@@ -106,24 +109,39 @@ const EditCategoryView = ({navigation, singleCategoryDetail}) => {
               <URLComponents
                 url={categoryForm.url}
                 updateOf="ProductCat"
-                changePermalink={(value) =>
+                changePermalink={value =>
                   setCategoryForm({...categoryForm, ['url']: value})
                 }
-                updatePermalink={(value) =>
+                updatePermalink={value =>
                   setCategoryForm({...categoryForm, ['url']: value})
                 }
               />
               <Input
                 label="Description"
                 value={categoryForm.description}
-                onChangeText={(value) =>
+                onChangeText={value =>
                   setCategoryForm({...categoryForm, ['description']: value})
                 }
                 multiline
                 numberOfLines={2}
                 errorMessage={validation.description}
               />
-              <Query query={GET_CATEGORIES}>
+              {allCategories.length ? (
+                <CustomPicker
+                  iosDropdown
+                  pickerKey="name"
+                  pickerVal="id"
+                  androidPickerData={allCategories}
+                  selectedValue={categoryForm.parentId}
+                  iosPickerData={allCategories}
+                  pickerValChange={val =>
+                    setCategoryForm({...categoryForm, ['parentId']: val})
+                  }
+                  placeholder="Please Select"
+                  label="Parent Category"
+                />
+              ) : null}
+              {/* <Query query={GET_CATEGORIES}>
                 {({loading, error, data}) => {
                   if (loading) {
                     return <AppLoader />;
@@ -149,7 +167,7 @@ const EditCategoryView = ({navigation, singleCategoryDetail}) => {
                     />
                   ) : null;
                 }}
-              </Query>
+              </Query> */}
 
               {categoryForm.image && categoryForm.image.medium ? (
                 <FeaturedImageComponents
@@ -158,7 +176,7 @@ const EditCategoryView = ({navigation, singleCategoryDetail}) => {
                       ? categoryForm.update_image
                       : BASE_URL + categoryForm.image.medium
                   }
-                  inputChange={(img) => {
+                  inputChange={img => {
                     setCategoryForm({...categoryForm, ['update_image']: img});
                   }}
                   removeImage={() => {
@@ -169,7 +187,7 @@ const EditCategoryView = ({navigation, singleCategoryDetail}) => {
               ) : (
                 <FeaturedImageComponents
                   image={featureImage}
-                  inputChange={(img) => {
+                  inputChange={img => {
                     setCategoryForm({...categoryForm, ['update_image']: img});
                     setFeatureImage(img);
                   }}
@@ -181,7 +199,7 @@ const EditCategoryView = ({navigation, singleCategoryDetail}) => {
               <Input
                 label="Meta Title"
                 value={categoryForm.meta.title}
-                onChangeText={(value) => {
+                onChangeText={value => {
                   categoryForm.meta.title = value;
                   setCategoryForm({
                     ...categoryForm,
@@ -191,7 +209,7 @@ const EditCategoryView = ({navigation, singleCategoryDetail}) => {
               <Input
                 label="Meta Keyword"
                 value={categoryForm.meta.keywords}
-                onChangeText={(value) => {
+                onChangeText={value => {
                   categoryForm.meta.keywords = value;
                   setCategoryForm({
                     ...categoryForm,
@@ -201,7 +219,7 @@ const EditCategoryView = ({navigation, singleCategoryDetail}) => {
               <Input
                 label="Meta Description"
                 value={categoryForm.meta.description}
-                onChangeText={(value) => {
+                onChangeText={value => {
                   categoryForm.meta.description = value;
                   setCategoryForm({
                     ...categoryForm,

@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Avatar} from 'react-native-elements';
+import {Avatar} from "@rneui/themed";
 import {
   ProfileWrapper,
   UserProfileAndNameWrapper,

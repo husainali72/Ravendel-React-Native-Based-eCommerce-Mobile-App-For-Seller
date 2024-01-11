@@ -5,7 +5,7 @@ const Styles = StyleSheet.create({
   pickerWrapper: {
     marginBottom: 7,
     marginTop: 7,
-    paddingHorizontal: 10,
+    // paddingHorizontal: 10,
     paddingVertical: 5,
     borderBottomWidth: 1,
     borderColor: '#15405059',

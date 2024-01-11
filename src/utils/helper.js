@@ -1,12 +1,13 @@
 import axios from 'axios';
 import SyncStorage from 'sync-storage';
-export const BASE_URL = 'https://ravendel-backend.hbwebsol.com';
+// export const BASE_URL = 'https://ravendel-backend.hbwebsol.com';
+export const BASE_URL = 'https://demo1.ravendel.io/';
 
-export const deleteProductVariation = (id) => {
+export const deleteProductVariation = id => {
   const token = SyncStorage.get('token') || '';
   return axios
     .post(
-      `${BASE_URL}/api/misc/delete_variation`,
+      `${BASE_URL}apis/misc/delete_variation`,
       {
         id: id,
       },
@@ -23,7 +24,7 @@ export const deleteProductVariation = (id) => {
     });
 };
 
-export const allPossibleCases = (arr) => {
+export const allPossibleCases = arr => {
   if (arr.length === 1) {
     let comb = [];
     for (const i of arr[0]) {
@@ -54,7 +55,7 @@ export const allPossibleCases = (arr) => {
   }
 };
 
-export const unflatten = (arr) => {
+export const unflatten = arr => {
   var tree = [],
     mappedArr = {},
     arrElem,
@@ -71,7 +72,7 @@ export const unflatten = (arr) => {
     if (mappedArr.hasOwnProperty(id)) {
       mappedElem = mappedArr[id];
       // If the element is not at the root level, add it to its parent array of children.
-      if (mappedElem.parentId) {
+      if (mappedElem.parentId && mappedElem.children) {
         mappedArr[mappedElem.parentId].children.push(mappedElem);
       }
       // If the element is at the root level, add it to first level elements array.
@@ -83,7 +84,7 @@ export const unflatten = (arr) => {
   return tree;
 };
 
-export const isEmpty = (value) =>
+export const isEmpty = value =>
   value === undefined ||
   value === null ||
   (typeof value === 'object' && Object.keys(value).length === 0) ||

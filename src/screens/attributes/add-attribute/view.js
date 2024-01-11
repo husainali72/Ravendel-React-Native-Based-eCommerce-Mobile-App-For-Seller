@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import AppLoader from '../../components/loader';
-import {Input} from 'react-native-elements';
+import {Input} from "@rneui/themed";
 import {AddAttributeWrapper, FormWrapper, NotesForAttribute} from './styles';
 import {useMutation} from '@apollo/client';
 import {ADD_ATTRIBUTE} from '../../../queries/attributesQueries';

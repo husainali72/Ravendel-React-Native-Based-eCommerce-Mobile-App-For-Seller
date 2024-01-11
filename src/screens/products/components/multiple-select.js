@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   badge: {
-    paddingHorizontal: 10,
+    // paddingHorizontal: 10,
     paddingVertical: 5,
     borderWidth: 1,
     borderColor: '#3a3a3a',

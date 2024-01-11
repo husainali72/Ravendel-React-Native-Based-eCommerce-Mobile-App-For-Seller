@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 const PRODUCT_TILE_DATA = gql`
   fragment ProductTile on Product {
-    id
+    _id
     name
     url
     categoryId {
@@ -36,19 +36,26 @@ const PRODUCT_TILE_DATA = gql`
     featured_product
     product_type
     shipping
-    tax_class
+    taxClass
     meta
     custom_field
     attribute
+    attribute_master {
+      id
+      name
+      attribute_values
+      createdAt
+      updatedAt
+    }
     variant
     variation_master {
       id
-      product_id
+      productId
       combination
-      price
       quantity
       sku
       image
+      pricing
       createdAt
       updatedAt
     }
@@ -60,21 +67,27 @@ const PRODUCT_TILE_DATA = gql`
 const GET_CATEGORIES = gql`
   {
     productCategories {
-      id
-      name
-      parentId
-      url
-      description
-      image
-      meta
-      date
-      updated
+      data {
+        id
+        name
+        parentId
+        url
+        description
+        image
+        meta
+        date
+        updated
+      }
+      message {
+        message
+        success
+      }
     }
   }
 `;
 
 const GET_CATEGORY = gql`
-  query($id: ID!) {
+  query ($id: ID!) {
     productCategory(id: $id) {
       id
       name
@@ -90,7 +103,7 @@ const GET_CATEGORY = gql`
 `;
 
 const ADD_CATEGORY = gql`
-  mutation(
+  mutation (
     $name: String
     $parentId: ID
     $url: String
@@ -120,7 +133,7 @@ const ADD_CATEGORY = gql`
 `;
 
 const UPDATE_CATEGORY = gql`
-  mutation(
+  mutation (
     $id: ID!
     $name: String
     $parentId: ID
@@ -152,7 +165,7 @@ const UPDATE_CATEGORY = gql`
 `;
 
 const DELETE_CATEGORY = gql`
-  mutation($id: ID!) {
+  mutation ($id: ID!) {
     deleteProductCategory(id: $id) {
       id
       name
@@ -168,25 +181,37 @@ const DELETE_CATEGORY = gql`
 `;
 
 const GET_PRODUCTS = gql`
-  {
-    products {
-      ...ProductTile
+  query ($admin: Boolean) {
+    products(admin: $admin) {
+      data {
+        ...ProductTile
+      }
+      message {
+        message
+        success
+      }
     }
   }
   ${PRODUCT_TILE_DATA}
 `;
 
 const GET_PRODUCT = gql`
-  query($id: ID!) {
+  query ($id: ID!) {
     product(id: $id) {
-      ...ProductTile
+      data {
+        ...ProductTile
+      }
+      message {
+        message
+        success
+      }
     }
   }
   ${PRODUCT_TILE_DATA}
 `;
 
 const ADD_PRODUCT = gql`
-  mutation(
+  mutation (
     $name: String
     $url: String
     $categoryId: customArray
@@ -239,8 +264,8 @@ const ADD_PRODUCT = gql`
 `;
 
 const UPDATE_PRODUCT = gql`
-  mutation(
-    $id: ID!
+  mutation (
+    $_id: ID!
     $name: String
     $url: String
     $categoryId: customArray
@@ -257,7 +282,7 @@ const UPDATE_PRODUCT = gql`
     $featured_product: Boolean
     $product_type: customObject
     $shipping: customObject
-    $tax_class: String
+    $taxClass: String
     $meta: customObject
     $custom_field: [customObject]
     $attribute: [customObject]
@@ -265,7 +290,7 @@ const UPDATE_PRODUCT = gql`
     $combinations: [customObject]
   ) {
     updateProduct(
-      id: $id
+      id: $_id
       name: $name
       url: $url
       categoryId: $categoryId
@@ -282,26 +307,26 @@ const UPDATE_PRODUCT = gql`
       featured_product: $featured_product
       product_type: $product_type
       shipping: $shipping
-      tax_class: $tax_class
+      taxClass: $taxClass
       meta: $meta
       custom_field: $custom_field
       attribute: $attribute
       variant: $variant
       combinations: $combinations
     ) {
-      ...ProductTile
+      message
+      success
     }
   }
-  ${PRODUCT_TILE_DATA}
 `;
 
 const DELETE_PRODUCT = gql`
-  mutation($id: ID!) {
+  mutation ($id: ID!) {
     deleteProduct(id: $id) {
-      ...ProductTile
+      message
+      success
     }
   }
-  ${PRODUCT_TILE_DATA}
 `;
 
 export {

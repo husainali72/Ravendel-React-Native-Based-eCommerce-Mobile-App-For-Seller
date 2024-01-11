@@ -7,7 +7,7 @@ import AppLoader from '../components/loader';
 import {Context as AuthContext} from '../../context/AuthContext';
 import axios from 'axios';
 import OTPTextView from 'react-native-otp-textinput';
-import {Button} from 'react-native-elements';
+import {Button} from '@rneui/themed';
 import {OTPWrapper} from './styles';
 import Colors from '../../utils/color';
 
@@ -17,7 +17,7 @@ const ConfirmScreen = ({navigation, route}) => {
   const [loading, setLoading] = useState(false);
   const [otpInput, setotpInput] = useState('');
 
-  const showAletMessage = (message) => {
+  const showAletMessage = message => {
     Alert.alert(message, '', [
       {
         text: 'Ok',
@@ -33,8 +33,9 @@ const ConfirmScreen = ({navigation, route}) => {
       showAletMessage('Please enter OTP code');
     } else {
       axios
-        .post(`${BASE_URL}/api/users/login`, loginDetail)
-        .then(async (response) => {
+        .post(`${BASE_URL}apis/users/login`, loginDetail)
+        .then(async response => {
+          console.log(response, 'rrrs');
           if (response.status === 200) {
             SyncStorage.set('token', response.data.token);
             SyncStorage.set('user', JSON.stringify(response.data));
@@ -44,7 +45,8 @@ const ConfirmScreen = ({navigation, route}) => {
             });
           }
         })
-        .catch((error) => {
+        .catch(error => {
+          console.log(error, 'rrrs', `${BASE_URL}api/users/login`);
           if (
             error.response &&
             error.response.status &&
@@ -65,7 +67,7 @@ const ConfirmScreen = ({navigation, route}) => {
       <OTPWrapper>
         <Text>Please Enter Otp Code</Text>
         <OTPTextView
-          handleTextChange={(text) => setotpInput(text)}
+          handleTextChange={text => setotpInput(text)}
           inputCount={4}
           keyboardType="numeric"
           containerStyle={{width: '90%', marginBottom: 20, marginTop: 20}}

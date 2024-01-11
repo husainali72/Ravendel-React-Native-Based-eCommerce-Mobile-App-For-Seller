@@ -32,7 +32,7 @@ const SingleCustomerView = ({singleCustomerDetail, navigation}) => {
           <CustomerProfileRow>
             <CustomerProfileLable>Name</CustomerProfileLable>
             <CustomerProfileValue>
-              {singleCustomer.first_name + ' ' + singleCustomer.last_name}
+              {singleCustomer.firstName + ' ' + singleCustomer.lastName}
             </CustomerProfileValue>
           </CustomerProfileRow>
           <CustomerProfileRow>

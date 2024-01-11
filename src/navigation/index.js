@@ -20,19 +20,24 @@ import BrandsScreens from './brands-screens';
 import AttrbutesScreen from './attributes-screen';
 import {Context as AuthContext} from '../context/AuthContext';
 import {isEmpty} from '../utils/helper';
-import InternetConnectivity from '../screens/components/internet-connectivity';
+// import InternetConnectivity from '../screens/components/internet-connectivity';
 import SplashScreen from '../screens/components/splash-screen';
+import {setToken} from '../utils/api';
 
 const Drawer = createDrawerNavigator();
 const Auth = createStackNavigator();
 
 const Navigation = () => {
   const AuthState = useContext(AuthContext);
+  console.log(JSON.stringify(AuthState), 'authstae');
   const [loading, setLoading] = useState(true);
-
   setTimeout(() => {
     setLoading(false);
   }, 500);
+
+  useEffect(() => {
+    setToken();
+  }, [AuthState.state.login]);
 
   useEffect(() => {
     if (AuthState && AuthState.state.token === null) {
@@ -45,14 +50,20 @@ const Navigation = () => {
       {loading ? (
         <SplashScreen />
       ) : (
-        <NavigationContainer>
+        <>
           {AuthState &&
           AuthState.state &&
           !isEmpty(AuthState.state.token) &&
           AuthState.state.login ? (
             <Drawer.Navigator
-              initialRouteName="Dashboard"
-              drawerContent={(props) => <CustomDrawer {...props} />}>
+              screenOptions={{
+                headerShown: false,
+                unmountOnBlur: true,
+                lazy: false,
+              }}
+              backBehavior={'initialRoute'}
+              detachInactiveScreens={true}
+              drawerContent={props => <CustomDrawer {...props} />}>
               <Drawer.Screen name="Dashboard" component={DashboardScreen} />
               <Drawer.Screen name="ProductsScreen" component={ProductsScreen} />
               <Drawer.Screen
@@ -98,9 +109,9 @@ const Navigation = () => {
               />
             </Auth.Navigator>
           )}
-        </NavigationContainer>
+        </>
       )}
-      <InternetConnectivity />
+      {/* <InternetConnectivity /> */}
     </>
   );
 };

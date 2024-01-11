@@ -1,13 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import {Text, View, TouchableOpacity, Image, Alert} from 'react-native';
-import {Picker} from '@react-native-community/picker';
+import {Picker} from '@react-native-picker/picker';
 import {
   Button,
   CheckBox,
   Input,
   BottomSheet,
   ListItem,
-} from 'react-native-elements';
+} from "@rneui/themed";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Colors from '../../../utils/color';
 import {
@@ -526,7 +526,7 @@ const Attributes = ({
               style={{
                 borderWidth: 1,
                 borderColor: '#ddd',
-                paddingHorizontal: 10,
+                // paddingHorizontal: 10,
                 marginVertical: 10,
               }}>
               <AccordionWrapper>

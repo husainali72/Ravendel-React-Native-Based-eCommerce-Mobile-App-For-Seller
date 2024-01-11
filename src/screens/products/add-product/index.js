@@ -285,7 +285,7 @@ const AddProductsScreen = ({navigation}) => {
     // console.log('AddProductSubmit details', details);
     addProduct({variables: details});
   };
-
+console.log(AddLoading ,'||', loader )
   return (
     <>
       {AddLoading || loader ? <AppLoader /> : null}

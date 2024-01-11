@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import AppLoader from '../../components/loader';
-import {Input} from 'react-native-elements';
+import {Input} from '@rneui/themed';
 import {EditAttributeWrapper, FormWrapper, NotesForAttribute} from './styles';
 import {useMutation, useQuery} from '@apollo/client';
 import {
@@ -15,6 +15,7 @@ const EditAttrView = ({navigation, singleAttrID}) => {
   const {loading, error, data} = useQuery(GET_ATTRIBUTE, {
     variables: {id: singleAttrID},
   });
+  console.log(data, 'edit attrib');
   const [loadingState, setLoadingState] = useState(false);
   const [attribute, setAttribute] = useState({});
   const [validation, setValdiation] = useState({
@@ -23,12 +24,12 @@ const EditAttrView = ({navigation, singleAttrID}) => {
   });
 
   useEffect(() => {
-    if (data && data.product_attribute) {
+    if (data && data.productAttribute) {
       setLoadingState(false);
-      var valuesArray = data.product_attribute.values;
-      var string = valuesArray.map((val) => val.name).join('\n');
-      data.product_attribute.value = string;
-      setAttribute(data.product_attribute);
+      var valuesArray = data.productAttribute.data.values;
+      var string = valuesArray.map(val => val.name).join('\n');
+      data.productAttribute.data.value = string;
+      setAttribute(data.productAttribute.data);
     }
   }, [data]);
 
@@ -45,10 +46,10 @@ const EditAttrView = ({navigation, singleAttrID}) => {
   const [UpdateAttributes, {loading: updateLoading}] = useMutation(
     UPDATE_ATTRIBUTE,
     {
-      onError: (error) => {
+      onError: error => {
         GraphqlError(error);
       },
-      onCompleted: (data) => {
+      onCompleted: data => {
         GraphqlSuccess('Update successfully');
         setAttribute({});
         navigation.goBack();
@@ -68,8 +69,8 @@ const EditAttrView = ({navigation, singleAttrID}) => {
         value: '',
       });
       var string = attribute.value;
-      var valuesArray = string.split('\n').map((val) => {
-        var hasOldVal = attribute.values.filter((aVal) => aVal.name === val);
+      var valuesArray = string.split('\n').map(val => {
+        var hasOldVal = attribute.values.filter(aVal => aVal.name === val);
 
         if (hasOldVal.length > 0) {
           return hasOldVal[0];
@@ -109,7 +110,7 @@ const EditAttrView = ({navigation, singleAttrID}) => {
               <Input
                 label="Name"
                 value={attribute.name}
-                onChangeText={(value) =>
+                onChangeText={value =>
                   setAttribute({...attribute, ['name']: value})
                 }
                 errorMessage={validation.name}
@@ -117,7 +118,7 @@ const EditAttrView = ({navigation, singleAttrID}) => {
               <Input
                 label="Items"
                 value={attribute.value}
-                onChangeText={(value) =>
+                onChangeText={value =>
                   setAttribute({...attribute, ['value']: value})
                 }
                 multiline

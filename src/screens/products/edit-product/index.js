@@ -70,6 +70,7 @@ const EditProductsScreen = ({route, navigation}) => {
   const {loading, error, data} = useQuery(GET_PRODUCT, {
     variables: {id: route.params.id},
   });
+  console.log(data, error, 'nddd');
   const [allCategories, setAllCategories] = useState([]);
   const [allBrands, setAllBrands] = useState([]);
   const [allAttributes, setAllAttributes] = useState([]);
@@ -129,16 +130,13 @@ const EditProductsScreen = ({route, navigation}) => {
   useEffect(() => {
     if (isFocused) {
       if (data && data.product) {
-        var singleProduct = data.product;
-        if (
-          singleProduct.feature_image &&
-          singleProduct.feature_image.original
-        ) {
-          setFeaturedImage(BASE_URL + singleProduct.feature_image.original);
+        var singleProduct = data.product.data;
+        if (singleProduct.feature_image) {
+          setFeaturedImage(BASE_URL + singleProduct.feature_image);
         }
         if (singleProduct.gallery_image.length > 0) {
           var allGalleryImage = singleProduct.gallery_image.map(
-            (gallery) => BASE_URL + gallery.original,
+            gallery => BASE_URL + gallery.original,
           );
           setGallery(allGalleryImage);
         }
@@ -158,7 +156,7 @@ const EditProductsScreen = ({route, navigation}) => {
     setProductDetail({...productDetail});
   };
 
-  const onGalleryImagesAdd = (img) => {
+  const onGalleryImagesAdd = img => {
     var updatedImages = productDetail.update_gallery_image || [];
     updatedImages.push(img);
     productDetail.update_gallery_image = updatedImages;
@@ -167,7 +165,7 @@ const EditProductsScreen = ({route, navigation}) => {
     setGallery([...gallery, img]);
   };
 
-  const onGalleryImagesRemove = (img) => {
+  const onGalleryImagesRemove = img => {
     if (img._id) {
       let galleryImages = productDetail.gallery_image;
       let removed_image = productDetail.removed_image || [];
@@ -175,25 +173,26 @@ const EditProductsScreen = ({route, navigation}) => {
       setProductDetail({
         ...productDetail,
         gallery_image: galleryImages.filter(
-          (galleryImg) => galleryImg._id !== img._id,
+          galleryImg => galleryImg._id !== img._id,
         ),
         removed_image,
       });
       return;
     }
-    setGallery(gallery.filter((galleryImg) => galleryImg !== img));
+    setGallery(gallery.filter(galleryImg => galleryImg !== img));
   };
 
-  const onFeaturedImageAdd = (img) => setFeaturedImage(img);
+  const onFeaturedImageAdd = img => setFeaturedImage(img);
   const onFeaturedImageRemove = () => setFeaturedImage(null);
 
   const [updateProduct, {loading: UpdateLoading}] = useMutation(
     UPDATE_PRODUCT,
     {
-      onError: (error) => {
+      onError: error => {
+        console.log(error);
         GraphqlError(error);
       },
-      onCompleted: (data) => {
+      onCompleted: data => {
         GraphqlSuccess('Updated Successfully');
         setProductDetail({});
         navigation.goBack();
@@ -208,7 +207,7 @@ const EditProductsScreen = ({route, navigation}) => {
   };
 
   const UpdateProductSubmit = () => {
-    var CategoryIDs = productDetail.categoryId.map((cat) => cat.id);
+    var CategoryIDs = productDetail.categoryId.map(cat => cat.id);
     var details = {
       id: productDetail.id,
       name: productDetail.name,
@@ -248,15 +247,15 @@ const EditProductsScreen = ({route, navigation}) => {
         <AppLoader />
       ) : null}
       <AppHeader title="Edit Product" navigation={navigation} back />
-      {!isEmpty(productDetail) && !isEmpty(productDetail.id) ? (
+      {!isEmpty(productDetail) && !isEmpty(productDetail._id) ? (
         <EditProductView
           editProductDetail={productDetail}
           featuredImage={featuredImage}
-          onFeaturedImageAdd={(img) => onFeaturedImageAdd(img)}
+          onFeaturedImageAdd={img => onFeaturedImageAdd(img)}
           onFeaturedImageRemove={onFeaturedImageRemove}
           galleryImages={gallery}
-          onGalleryImagesAdd={(img) => onGalleryImagesAdd(img)}
-          onGalleryImagesRemove={(img) => onGalleryImagesRemove(img)}
+          onGalleryImagesAdd={img => onGalleryImagesAdd(img)}
+          onGalleryImagesRemove={img => onGalleryImagesRemove(img)}
           navigation={navigation}
           inputChange={(name, value) => onValueChange(name, value)}
           objectInputChange={(object, name, value) =>

@@ -2,7 +2,7 @@ import React, {useContext, useState, useEffect} from 'react';
 import {View, StyleSheet, Alert} from 'react-native';
 import {DrawerContentScrollView, DrawerItem} from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {Avatar, Text} from 'react-native-elements';
+import {Avatar, Text} from "@rneui/themed";
 import {Context as AuthContext} from '../../context/AuthContext';
 import {isEmpty, BASE_URL} from '../../utils/helper';
 
@@ -13,11 +13,15 @@ export function CustomDrawer(props) {
     image: '',
   });
 
-  useEffect(() => {
-    if (state && state.user) {
-      setUserDetails(JSON.parse(state.user));
-    }
-  }, [state]);
+  // useEffect(() => {
+  //   if (state && state.user) {
+  //     setUserDetails({
+  //       name: 'tins',
+  //       image: '',
+  //     })
+  //     // setUserDetails(JSON.parse(state.user));
+  //   }
+  // }, [state]);
 
   const logout = () => {
     Alert.alert(

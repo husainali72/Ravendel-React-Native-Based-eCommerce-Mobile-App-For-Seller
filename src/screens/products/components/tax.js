@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Picker} from '@react-native-community/picker';
+import {Picker} from '@react-native-picker/picker';
 import {isEmpty} from '../../../utils/helper';
 
 const TaxComponent = ({taxState, onTaxChange, tax_class}) => {
